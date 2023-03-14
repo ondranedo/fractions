@@ -8,7 +8,7 @@
 #define FRAC_API __cdecl
 
 #include <inttypes.h>
-#include <cstdio>
+#include <stdio.h>
 
 #define FRAC_FLOAT_PRECISION 7
 #define FRAC_DOUBLE_PRECISION 24
@@ -24,7 +24,9 @@ typedef struct{
 // Fraction creation
 fracFraction64*  FRAC_API fracCreateFraction64H(const int64_t a, const int64_t b);
 fracFraction64  FRAC_API fracCreateFraction64(const int64_t a, const int64_t b);
+//TODO:
 fracFraction64* FRAC_API fracCreateFloatFraction64H(const double num, const int8_t precision);
+//TODO:
 fracFraction64  FRAC_API fracCreateFloatFraction64(const double num, const int8_t precision);
 
 // Copy functions
@@ -41,15 +43,15 @@ void FRAC_API fracSetAFraction64(fracFraction64* frac, const int64_t a);
 void FRAC_API fracSetBFraction64(fracFraction64* frac, const int64_t b);
 
 // Fraction getters
-int64_t FRAC_API fracGetAFraction64(fracFraction64* frac, const int64_t a);
-int64_t FRAC_API fracGetBFraction64(fracFraction64* frac, const int64_t b);
+int64_t FRAC_API fracGetAFraction64(fracFraction64* frac);
+int64_t FRAC_API fracGetBFraction64(fracFraction64* frac);
 
-// Fraction addition
+// Fraction addition TODO
 fracFraction64* FRAC_API fracAddFraction64H(fracFraction64* frac1, fracFraction64* frac2);
 fracFraction64 FRAC_API fracAddFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracAddOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
-// Fraction subtraction
+// Fraction subtraction TODO
 fracFraction64* FRAC_API fracSubFraction64H(fracFraction64* frac1, fracFraction64* frac2);
 fracFraction64 FRAC_API fracSubFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracSubOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
@@ -64,7 +66,7 @@ fracFraction64* FRAC_API fracDivFraction64H(fracFraction64* frac1, fracFraction6
 fracFraction64  FRAC_API fracDivFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracDivOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
-// Fraction power
+// Fraction power TODO
 fracFraction64* FRAC_API fracPowFraction64H(fracFraction64* frac1, fracFraction64* frac2);
 fracFraction64  FRAC_API fracPowFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracPowOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
@@ -79,5 +81,6 @@ int FRAC_API fracComFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracSimplifyFraction64(fracFraction64* frac);
 void FRAC_API fracDumpFraction64(FILE* file, fracFraction64* frac);
 double FRAC_API fracFloatFraction64(fracFraction64* frac, int8_t precision);
+int64_t FRAC_API fracLCDFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
 #endif //ZLOMKY_FRACTIONS64_H
