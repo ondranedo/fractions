@@ -1,8 +1,6 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.2)
 
 project(zlomky)
 
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED true)
-
-add_executable(zlomky src/main.c src/fractions.cpp src/fractions.h)
+add_subdirectory(zlomky)
+add_subdirectory(demo)
