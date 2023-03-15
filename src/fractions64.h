@@ -47,15 +47,15 @@ void FRAC_API fracSetBFraction64(fracFraction64* frac, const int64_t b);
 int64_t FRAC_API fracGetAFraction64(fracFraction64* frac);
 int64_t FRAC_API fracGetBFraction64(fracFraction64* frac);
 
-// Fraction addition TODO
-//fracFraction64* FRAC_API fracAddFraction64H(fracFraction64* frac1, fracFraction64* frac2);
-//fracFraction64 FRAC_API fracAddFraction64(fracFraction64* frac1, fracFraction64* frac2);
-//void FRAC_API fracAddOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
+// Fraction addition
+fracFraction64* FRAC_API fracAddFraction64H(fracFraction64* frac1, fracFraction64* frac2);
+fracFraction64 FRAC_API fracAddFraction64(fracFraction64* frac1, fracFraction64* frac2);
+void FRAC_API fracAddOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
-// Fraction subtraction TODO
-//fracFraction64* FRAC_API fracSubFraction64H(fracFraction64* frac1, fracFraction64* frac2);
-//fracFraction64 FRAC_API fracSubFraction64(fracFraction64* frac1, fracFraction64* frac2);
-//void FRAC_API fracSubOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
+// Fraction subtraction
+fracFraction64* FRAC_API fracSubFraction64H(fracFraction64* frac1, fracFraction64* frac2);
+fracFraction64 FRAC_API fracSubFraction64(fracFraction64* frac1, fracFraction64* frac2);
+void FRAC_API fracSubOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
 // Fraction multiplication
 fracFraction64* FRAC_API fracMulFraction64H(fracFraction64* frac1, fracFraction64* frac2);

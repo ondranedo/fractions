@@ -7,18 +7,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-static struct Allocator{
+static struct _allocator{
     void*(*alloc)(size_t size);
     void(*free)(void* block);
     void*(*realloc)(void* block,size_t new_size);
 }allocator = {malloc, free, realloc};
 
-static int64_t abs64(const int64_t a)
-{
-    return a >= 0 ? a : -a;
-}
+static struct fractionSplitToLCD_{
+    int64_t LCD;
+    int64_t frac1_num;
+    int64_t frac2_num;
+};
+typedef struct fractionSplitToLCD_ fractionSplitToLCD;
 
+static int64_t abs64(const int64_t a);
 static void formatMSGOutputToBuffer(char *buff, size_t size, fracFraction64 *frac, const char *form);
+static fractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction64 *frac2);
 
 fracFraction64 FRAC_API fracCreateFraction64(const int64_t a, const int64_t b)
 {
@@ -179,4 +183,62 @@ void FRAC_API fracDumpFraction64(FILE* file, fracFraction64* frac, const char* f
         snprintf(buff, FRAC_MSG_BUFFER_SIZE, "%lli/%lli", frac->a, frac->b);
 
     fprintf(file,"%s", buff);
+}
+
+static int64_t abs64(const int64_t a)
+{
+return a >= 0 ? a : -a;
+}
+
+static fractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction64 *frac2)
+{
+    fractionSplitToLCD dat;
+    dat.LCD = fracLCDFraction64(frac1, frac2);
+    dat.frac1_num = dat.LCD/frac1->b * frac1->a;
+    dat.frac2_num = dat.LCD/frac2->b * frac2->a;
+    return dat;
+}
+
+fracFraction64* FRAC_API fracAddFraction64H(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fracFraction64 * retfrac = (fracFraction64*)allocator.alloc(sizeof(fracFraction64));
+    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    fracSetFraction64(retfrac,dat.frac1_num + dat.frac2_num,dat.LCD);
+    return retfrac;
+}
+
+fracFraction64 FRAC_API fracAddFraction64(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fracFraction64 retfrac;
+    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    fracSetFraction64(&retfrac,dat.frac1_num + dat.frac2_num,dat.LCD);
+    return retfrac;
+}
+
+void FRAC_API fracAddOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    fracSetFraction64(frac1,dat.frac1_num + dat.frac2_num,dat.LCD);
+}
+
+fracFraction64* FRAC_API fracSubFraction64H(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fracFraction64 * retfrac = (fracFraction64*)allocator.alloc(sizeof(fracFraction64));
+    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    fracSetFraction64(retfrac,dat.frac1_num - dat.frac2_num,dat.LCD);
+    return retfrac;
+}
+
+fracFraction64 FRAC_API fracSubFraction64(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fracFraction64 retfrac;
+    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    fracSetFraction64(&retfrac,dat.frac1_num - dat.frac2_num,dat.LCD);
+    return retfrac;
+}
+
+void FRAC_API fracSubOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    fracSetFraction64(frac1,dat.frac1_num - dat.frac2_num,dat.LCD);
 }
