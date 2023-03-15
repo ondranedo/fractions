@@ -5,6 +5,7 @@
 #include "fractions64.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 static struct Allocator{
     void*(*alloc)(size_t size);
@@ -12,10 +13,12 @@ static struct Allocator{
     void*(*realloc)(void* block,size_t new_size);
 }allocator = {malloc, free, realloc};
 
-static int64_t mod64(const int64_t a)
+static int64_t abs64(const int64_t a)
 {
     return a >= 0 ? a : -a;
 }
+
+static void formatMSGOutputToBuffer(char *buff, size_t size, fracFraction64 *frac, const char *form);
 
 fracFraction64 FRAC_API fracCreateFraction64(const int64_t a, const int64_t b)
 {
@@ -135,8 +138,8 @@ void FRAC_API fracSwitchBFraction64(fracFraction64* frac1, fracFraction64* frac2
 
 int64_t FRAC_API fracLCDFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
-    int64_t scalar = mod64(frac1->b) > mod64(frac2->b) ? mod64(frac1->b) : mod64(frac2->b);
-    int64_t max_LCD = mod64(frac1->b) * mod64(frac2->b);
+    int64_t scalar = abs64(frac1->b) > abs64(frac2->b) ? abs64(frac1->b) : abs64(frac2->b);
+    int64_t max_LCD = abs64(frac1->b) * abs64(frac2->b);
     int64_t LCD;
 
     for(LCD = scalar; LCD<max_LCD; LCD+=scalar)
@@ -144,4 +147,36 @@ int64_t FRAC_API fracLCDFraction64(fracFraction64* frac1, fracFraction64* frac2)
             break;
 
     return LCD;
+}
+
+static void formatMSGOutputToBuffer(char *buff, size_t size, fracFraction64 *frac, const char *form)
+{
+    char tmp_buff[FRAC_MSG_BUFFER_SIZE];
+    size_t i, tmp_buffer_size = 0;
+    memset(buff, 0, size);
+
+    for(i = 0; i < size && form[i] != '\0'; i++)
+    {
+        if(form[i]=='%')
+            tmp_buffer_size+=snprintf(tmp_buff + tmp_buffer_size,FRAC_MSG_BUFFER_SIZE, "%lli", form[++i] == 'a' ? frac->a : frac->b);
+        else
+            tmp_buff[tmp_buffer_size++] = form[i];
+    }
+
+    if(tmp_buffer_size>size)
+        snprintf(buff, size, "Error, can't write msg to buffer, memory corruption detected");
+    else
+        memcpy(buff, tmp_buff, size);
+}
+
+void FRAC_API fracDumpFraction64(FILE* file, fracFraction64* frac, const char* form)
+{
+    char buff[FRAC_MSG_BUFFER_SIZE];
+
+    if(form)
+        formatMSGOutputToBuffer(buff, FRAC_MSG_BUFFER_SIZE, frac, form);
+    else
+        snprintf(buff, FRAC_MSG_BUFFER_SIZE, "%lli/%lli", frac->a, frac->b);
+
+    fprintf(file,"%s", buff);
 }
