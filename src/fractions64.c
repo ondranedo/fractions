@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static struct _allocator{
+static struct allocator_{
     void*(*alloc)(size_t size);
     void(*free)(void* block);
     void*(*realloc)(void* block,size_t new_size);
@@ -241,4 +241,10 @@ void FRAC_API fracSubOverwriteFraction64(fracFraction64* frac1, fracFraction64* 
 {
     fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     fracSetFraction64(frac1,dat.frac1_num - dat.frac2_num,dat.LCD);
+}
+
+int64_t FRAC_API fracComFraction64(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    return dat.frac1_num > dat.frac2_num ? 1 :  dat.frac1_num == dat.frac2_num ? 0 : -1;
 }
