@@ -342,8 +342,21 @@ static void severityToStr(char* buff, size_t buff_size, fracSeverity sev)
     }
 }
 
-// Control function
 void FRAC_API fracSetLogLvl(fracSeverity sev)
 {
     severity = sev;
+}
+
+void FRAC_API fracSimplifyFraction64(fracFraction64* frac)
+{
+    int64_t max_sim = frac->a > frac->b ? frac->a : frac->b;
+    for(int64_t i = 2; i <= max_sim; i++)
+    {
+        if(frac->a%i == 0 && frac->b%i == 0)
+        {
+            frac->a /= i;
+            frac->b /= i;
+            fracSimplifyFraction64(frac);
+        }
+    }
 }

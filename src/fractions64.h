@@ -87,13 +87,13 @@ void FRAC_API fracSwitchBFraction64(fracFraction64* frac1, fracFraction64* frac2
 
 // Other functions TODO:
 int64_t FRAC_API fracComFraction64(fracFraction64* frac1, fracFraction64* frac2);
-//void FRAC_API fracSimplifyFraction64(fracFraction64* frac);
+void FRAC_API fracSimplifyFraction64(fracFraction64* frac);
 void FRAC_API fracDumpFraction64(FILE* file, fracFraction64* frac, const char* form);
 //double FRAC_API fracFloatFraction64(fracFraction64* frac, int8_t precision);
 
 int64_t FRAC_API fracLCDFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
-// Control function
+// Control functions
 void FRAC_API fracSetLogLvl(fracSeverity severity);
 
 #endif //ZLOMKY_FRACTIONS64_H
