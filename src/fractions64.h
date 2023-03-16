@@ -19,6 +19,13 @@ typedef struct{
     int64_t b;
 } fracFraction64;
 
+typedef enum{
+    FRAC_ALL = 0,
+    FRAC_WARNING,
+    FRAC_ERROR,
+    FRAC_NONE
+} fracSeverity;
+
 // TODO: Fraction allocator
 // TODO: Fraction conversion
 
@@ -85,5 +92,8 @@ void FRAC_API fracDumpFraction64(FILE* file, fracFraction64* frac, const char* f
 //double FRAC_API fracFloatFraction64(fracFraction64* frac, int8_t precision);
 
 int64_t FRAC_API fracLCDFraction64(fracFraction64* frac1, fracFraction64* frac2);
+
+// Control function
+void FRAC_API fracSetLogLvl(fracSeverity severity);
 
 #endif //ZLOMKY_FRACTIONS64_H

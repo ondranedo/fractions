@@ -33,7 +33,10 @@ typedef struct FractionSplitToLCD_ FractionSplitToLCD;
       Static data
 
 \*********************/
+// TODO: change allocator functions
 static Allocator allocator = {malloc, free, realloc};
+// TODO: change msg severity
+static fracSeverity severity = FRAC_ERROR;
 
 /*********************\
 
@@ -43,7 +46,8 @@ static Allocator allocator = {malloc, free, realloc};
 static int64_t abs64(const int64_t a);
 static void formatMSGOutputToBuffer(char *buff, size_t size, fracFraction64 *frac, const char *form);
 static FractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction64 *frac2);
-
+static void logMSG(const char* msg, fracSeverity severity);
+static void severityToStr(char* buff, size_t buff_size, fracSeverity sev);
 
 /*********************\
 
@@ -194,7 +198,7 @@ static void formatMSGOutputToBuffer(char *buff, size_t size, fracFraction64 *fra
     }
 
     if(tmp_buffer_size>size)
-        snprintf(buff, size, "Error, can't write msg to buffer, memory corruption detected");
+        logMSG("can't write to dump msg, memory corruption detected, change buffer size", FRAC_ERROR);
     else
         memcpy(buff, tmp_buff, size);
 }
@@ -286,8 +290,7 @@ fracFraction64* FRAC_API fracPowFraction64H(fracFraction64* frac1, fracFraction6
 {
     fracFraction64* retfrac = (fracFraction64*)allocator.alloc(sizeof(fracFraction64));
 
-    // TODO: IF warning output
-    fprintf(stderr, "Warning, power operation should not be called on fracFraction64, use floating point base fractions\n");
+    logMSG("Power operation should not be called on fracFraction64, use floating point base fractions", FRAC_WARNING);
 
     fracSetFraction64(retfrac, (int64_t)fracPowDoubleFraction64((double)frac1->a, frac2),
                       (int64_t)fracPowDoubleFraction64((double)frac1->b, frac2));
@@ -298,8 +301,7 @@ fracFraction64* FRAC_API fracPowFraction64H(fracFraction64* frac1, fracFraction6
 fracFraction64  FRAC_API fracPowFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
     fracFraction64 retfrac;
-    // TODO: IF warning output
-    fprintf(stderr, "Warning, power operation should not be called on fracFraction64, use floating point base fractions\n");
+    logMSG("Power operation should not be called on fracFraction64, use floating point base fractions", FRAC_WARNING);
 
     fracSetFraction64(&retfrac, (int64_t)fracPowDoubleFraction64((double)frac1->a, frac2),
                       (int64_t)fracPowDoubleFraction64((double)frac1->b, frac2));
@@ -308,9 +310,40 @@ fracFraction64  FRAC_API fracPowFraction64(fracFraction64* frac1, fracFraction64
 
 void FRAC_API fracPowOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
-    // TODO: IF warning output
-    fprintf(stderr, "Warning, power operation should not be called on fracFraction64, use floating point base fractions\n");
+    logMSG("Power operation should not be called on fracFraction64, use floating point base fractions", FRAC_WARNING);
 
     fracSetFraction64(frac1, (int64_t)fracPowDoubleFraction64((double)frac1->a, frac2),
                       (int64_t)fracPowDoubleFraction64((double)frac1->b, frac2));
+}
+
+static void logMSG(const char* msg, fracSeverity sev)
+{
+    char buff[FRAC_MSG_BUFFER_SIZE];
+    if(sev < severity) return;
+
+    severityToStr(buff,FRAC_MSG_BUFFER_SIZE, sev);
+    fprintf(stderr, "[%s] %s\n", buff, msg);
+}
+
+static void severityToStr(char* buff, size_t buff_size, fracSeverity sev)
+{
+    if(buff_size<8) return;
+    switch (sev) {
+        case FRAC_NONE:
+            break;
+        case FRAC_WARNING:
+            snprintf(buff, buff_size, "WARNING");
+            break;
+        case FRAC_ERROR:
+            snprintf(buff, buff_size, "ERROR");
+            break;
+        default:
+            snprintf(buff, buff_size, "UNKNOWN");
+    }
+}
+
+// Control function
+void FRAC_API fracSetLogLvl(fracSeverity sev)
+{
+    severity = sev;
 }
