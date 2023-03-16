@@ -6,24 +6,50 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
-static struct allocator_{
+/*********************\
+
+     Static d.t
+
+\*********************/
+
+static struct Allocator_{
     void*(*alloc)(size_t size);
     void(*free)(void* block);
     void*(*realloc)(void* block,size_t new_size);
-}allocator = {malloc, free, realloc};
+};
+typedef struct Allocator_ Allocator;
 
-static struct fractionSplitToLCD_{
+static struct FractionSplitToLCD_{
     int64_t LCD;
     int64_t frac1_num;
     int64_t frac2_num;
 };
-typedef struct fractionSplitToLCD_ fractionSplitToLCD;
+typedef struct FractionSplitToLCD_ FractionSplitToLCD;
 
+/*********************\
+
+      Static data
+
+\*********************/
+static Allocator allocator = {malloc, free, realloc};
+
+/*********************\
+
+   Static functions
+
+\*********************/
 static int64_t abs64(const int64_t a);
 static void formatMSGOutputToBuffer(char *buff, size_t size, fracFraction64 *frac, const char *form);
-static fractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction64 *frac2);
+static FractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction64 *frac2);
 
+
+/*********************\
+
+ Function definitions
+
+\*********************/
 fracFraction64 FRAC_API fracCreateFraction64(const int64_t a, const int64_t b)
 {
     fracFraction64 f;
@@ -190,9 +216,9 @@ static int64_t abs64(const int64_t a)
 return a >= 0 ? a : -a;
 }
 
-static fractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction64 *frac2)
+static FractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction64 *frac2)
 {
-    fractionSplitToLCD dat;
+    FractionSplitToLCD dat;
     dat.LCD = fracLCDFraction64(frac1, frac2);
     dat.frac1_num = dat.LCD/frac1->b * frac1->a;
     dat.frac2_num = dat.LCD/frac2->b * frac2->a;
@@ -202,7 +228,7 @@ static fractionSplitToLCD splitToNumerators(fracFraction64 *frac1, fracFraction6
 fracFraction64* FRAC_API fracAddFraction64H(fracFraction64* frac1, fracFraction64* frac2)
 {
     fracFraction64 * retfrac = (fracFraction64*)allocator.alloc(sizeof(fracFraction64));
-    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    FractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     fracSetFraction64(retfrac,dat.frac1_num + dat.frac2_num,dat.LCD);
     return retfrac;
 }
@@ -210,21 +236,21 @@ fracFraction64* FRAC_API fracAddFraction64H(fracFraction64* frac1, fracFraction6
 fracFraction64 FRAC_API fracAddFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
     fracFraction64 retfrac;
-    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    FractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     fracSetFraction64(&retfrac,dat.frac1_num + dat.frac2_num,dat.LCD);
     return retfrac;
 }
 
 void FRAC_API fracAddOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
-    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    FractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     fracSetFraction64(frac1,dat.frac1_num + dat.frac2_num,dat.LCD);
 }
 
 fracFraction64* FRAC_API fracSubFraction64H(fracFraction64* frac1, fracFraction64* frac2)
 {
     fracFraction64 * retfrac = (fracFraction64*)allocator.alloc(sizeof(fracFraction64));
-    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    FractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     fracSetFraction64(retfrac,dat.frac1_num - dat.frac2_num,dat.LCD);
     return retfrac;
 }
@@ -232,19 +258,59 @@ fracFraction64* FRAC_API fracSubFraction64H(fracFraction64* frac1, fracFraction6
 fracFraction64 FRAC_API fracSubFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
     fracFraction64 retfrac;
-    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    FractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     fracSetFraction64(&retfrac,dat.frac1_num - dat.frac2_num,dat.LCD);
     return retfrac;
 }
 
 void FRAC_API fracSubOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
-    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    FractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     fracSetFraction64(frac1,dat.frac1_num - dat.frac2_num,dat.LCD);
 }
 
 int64_t FRAC_API fracComFraction64(fracFraction64* frac1, fracFraction64* frac2)
 {
-    fractionSplitToLCD dat = splitToNumerators(frac1, frac2);
+    FractionSplitToLCD dat = splitToNumerators(frac1, frac2);
     return dat.frac1_num > dat.frac2_num ? 1 :  dat.frac1_num == dat.frac2_num ? 0 : -1;
+}
+
+double FRAC_API fracPowDoubleFraction64(const double num, fracFraction64* frac)
+{
+    double power = pow(num, (double)frac->a);
+    double sqrt = pow(power, 1.0/(double)frac->b);
+    return sqrt;
+}
+
+fracFraction64* FRAC_API fracPowFraction64H(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fracFraction64* retfrac = (fracFraction64*)allocator.alloc(sizeof(fracFraction64));
+
+    // TODO: IF warning output
+    fprintf(stderr, "Warning, power operation should not be called on fracFraction64, use floating point base fractions\n");
+
+    fracSetFraction64(retfrac, (int64_t)fracPowDoubleFraction64((double)frac1->a, frac2),
+                      (int64_t)fracPowDoubleFraction64((double)frac1->b, frac2));
+
+    return retfrac;
+}
+
+fracFraction64  FRAC_API fracPowFraction64(fracFraction64* frac1, fracFraction64* frac2)
+{
+    fracFraction64 retfrac;
+    // TODO: IF warning output
+    fprintf(stderr, "Warning, power operation should not be called on fracFraction64, use floating point base fractions\n");
+
+    fracSetFraction64(&retfrac, (int64_t)fracPowDoubleFraction64((double)frac1->a, frac2),
+                      (int64_t)fracPowDoubleFraction64((double)frac1->b, frac2));
+    return retfrac;
+}
+
+void FRAC_API fracPowOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2)
+{
+    // TODO: IF warning output
+    fprintf(stderr, "Warning, power operation should not be called on fracFraction64, use floating point base fractions\n");
+
+    fracSetFraction64(frac1, (int64_t)fracPowDoubleFraction64((double)frac1->a, frac2),
+                      (int64_t)fracPowDoubleFraction64((double)frac1->b, frac2));
 }

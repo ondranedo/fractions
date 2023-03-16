@@ -67,10 +67,11 @@ fracFraction64* FRAC_API fracDivFraction64H(fracFraction64* frac1, fracFraction6
 fracFraction64  FRAC_API fracDivFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracDivOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
-// Fraction power TODO
-//fracFraction64* FRAC_API fracPowFraction64H(fracFraction64* frac1, fracFraction64* frac2);
-//fracFraction64  FRAC_API fracPowFraction64(fracFraction64* frac1, fracFraction64* frac2);
-//void FRAC_API fracPowOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
+// Fraction power
+fracFraction64* FRAC_API fracPowFraction64H(fracFraction64* frac1, fracFraction64* frac2);
+fracFraction64  FRAC_API fracPowFraction64(fracFraction64* frac1, fracFraction64* frac2);
+void FRAC_API fracPowOverwriteFraction64(fracFraction64* frac1, fracFraction64* frac2);
+double FRAC_API fracPowDoubleFraction64(const double num, fracFraction64* frac);
 
 // Fraction switch
 void FRAC_API fracSwitchABFraction64(fracFraction64* frac);
