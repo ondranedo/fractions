@@ -95,5 +95,6 @@ int64_t FRAC_API fracLCDFraction64(fracFraction64* frac1, fracFraction64* frac2)
 
 // Control functions
 void FRAC_API fracSetLogLvl(fracSeverity severity);
+void FRAC_API fracSetDefaultSimplification(const int state);
 
 #endif //ZLOMKY_FRACTIONS64_H

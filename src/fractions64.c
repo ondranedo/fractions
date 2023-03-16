@@ -37,6 +37,7 @@ typedef struct FractionSplitToLCD_ FractionSplitToLCD;
 static Allocator allocator = {malloc, free, realloc};
 // TODO: change msg severity
 static fracSeverity severity = FRAC_ERROR;
+static int simplify = 1;
 
 /*********************\
 
@@ -94,7 +95,8 @@ void FRAC_API fracSetFraction64(fracFraction64* frac, const int64_t a, const int
 {
     frac->a = a;
     frac->b = b;
-    // TODO: if default, simplify
+    if(simplify)
+        fracSimplifyFraction64(frac);
 }
 
 void FRAC_API fracSetAFraction64(fracFraction64* frac, const int64_t a)
@@ -359,4 +361,9 @@ void FRAC_API fracSimplifyFraction64(fracFraction64* frac)
             fracSimplifyFraction64(frac);
         }
     }
+}
+
+void FRAC_API fracSetDefaultSimplification(const int state)
+{
+    simplify = state;
 }
