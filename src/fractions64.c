@@ -367,3 +367,9 @@ void FRAC_API fracSetDefaultSimplification(const int state)
 {
     simplify = state;
 }
+
+long double FRAC_API fracFloatFraction64(fracFraction64* frac/*, int8_t precision*/)
+{
+    // TODO: presion set
+    return  (long double)frac->a / (long double)frac->b;
+}

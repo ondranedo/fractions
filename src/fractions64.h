@@ -10,8 +10,9 @@
 #include <inttypes.h>
 #include <stdio.h>
 
-#define FRAC_FLOAT_PRECISION 7
-#define FRAC_DOUBLE_PRECISION 24
+#define FRAC_PRECISION_FLOAT 7
+#define FRAC_PRECISION_DOUBLE 24
+#define FRAC_PRECISION_LONGDOUBLE 33
 #define FRAC_MSG_BUFFER_SIZE 256
 
 typedef struct{
@@ -28,6 +29,7 @@ typedef enum{
 
 // TODO: Fraction allocator
 // TODO: Fraction conversion
+// TODO: Fraction from/to string
 
 // Fraction creation
 fracFraction64*  FRAC_API fracCreateFraction64H(const int64_t a, const int64_t b);
@@ -85,11 +87,11 @@ void FRAC_API fracSwitchABFraction64(fracFraction64* frac);
 void FRAC_API fracSwitchAFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracSwitchBFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
-// Other functions TODO:
+// Other functions
 int64_t FRAC_API fracComFraction64(fracFraction64* frac1, fracFraction64* frac2);
 void FRAC_API fracSimplifyFraction64(fracFraction64* frac);
 void FRAC_API fracDumpFraction64(FILE* file, fracFraction64* frac, const char* form);
-//double FRAC_API fracFloatFraction64(fracFraction64* frac, int8_t precision);
+long double FRAC_API fracFloatFraction64(fracFraction64* frac/*, int8_t precision*/);
 
 int64_t FRAC_API fracLCDFraction64(fracFraction64* frac1, fracFraction64* frac2);
 
