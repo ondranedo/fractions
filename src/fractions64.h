@@ -14,6 +14,8 @@
 #define FRAC_PRECISION_DOUBLE 24
 #define FRAC_PRECISION_LONGDOUBLE 33
 #define FRAC_MSG_BUFFER_SIZE 256
+#define FRAC_FALSE 0
+#define FRAC_TRUE 1
 
 typedef struct{
     int64_t a;
@@ -34,10 +36,8 @@ typedef enum{
 // Fraction creation
 fracFraction64*  FRAC_API fracCreateFraction64H(const int64_t a, const int64_t b);
 fracFraction64  FRAC_API fracCreateFraction64(const int64_t a, const int64_t b);
-//TODO:
-//fracFraction64* FRAC_API fracCreateFloatFraction64H(const double num, const int8_t precision);
-//TODO:
-//fracFraction64  FRAC_API fracCreateFloatFraction64(const double num, const int8_t precision);
+fracFraction64* FRAC_API fracCreateFloatFraction64H(const long double num, const int8_t precision);
+fracFraction64  FRAC_API fracCreateFloatFraction64(const long double num, const int8_t precision);
 
 // Copy functions
 fracFraction64* FRAC_API fracGetCpyFraction64H(const fracFraction64* frac);

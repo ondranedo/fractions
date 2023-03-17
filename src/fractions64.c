@@ -373,3 +373,18 @@ long double FRAC_API fracFloatFraction64(fracFraction64* frac/*, int8_t precisio
     // TODO: presion set
     return  (long double)frac->a / (long double)frac->b;
 }
+fracFraction64* FRAC_API fracCreateFloatFraction64H(const long double num, const int8_t precision)
+{
+    fracFraction64* frac = (fracFraction64*)allocator.alloc(sizeof(fracFraction64));
+    int64_t scalar = (int64_t)pow(10, precision);
+    fracSetFraction64(frac, (int64_t)(num*scalar),scalar);
+    return frac;
+}
+
+fracFraction64 FRAC_API fracCreateFloatFraction64(const long double num, const int8_t precision)
+{
+    fracFraction64 frac;
+    int64_t scalar = (int64_t)pow(10, precision);
+    fracSetFraction64(&frac, (int64_t)(num*scalar),scalar);
+    return frac;
+}
