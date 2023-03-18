@@ -1,0 +1,178 @@
+\documentclass[a4paper, twocolumn, 11pt, twoside]{article}
+\usepackage{url}
+\usepackage{mathtools}
+\date{\small{18, Března, 2023}}
+\title{\Huge{\textbf{Fractions64}}}
+\author{Ondrej Nedojedly}
+
+\begin{document}
+\maketitle
+\section{Úvod}
+Tato dokumentace obsahuje podrobný přehled knihovny 
+Fractions64, což je knihovna jazyka C (používajícího standard 99) pro 
+pro práci se zlomky s 64bitovou přesností celých čísel. 
+Knihovna obsahuje funkce pro vytváření, 
+manipulaci a provádění operací se zlomky.
+
+Knihovna je navržena tak, aby se snadno používala a integrovala
+do projektů v jazyce C a poskytuje celou řadu funkcí.
+umožňující vývojářům pracovat se zlomky v prostředí
+flexibilním a efektivním způsobem. Kromě toho knihovna
+obsahuje funkce pro zjednodušení zlomků, převody zlomků a další funkce.
+zlomků na čísla s pohyblivou řádovou čárkou a další.
+
+Tato dokumentace poskytuje přehled o knihovně
+včetně příkladů použití jednotlivých funkcí.
+a popisuje datové struktury knihovny.
+a rozhraní API. Je určena vývojářům, kteří hledají
+pracovat se zlomky ve svých projektech v jazyce C a kteří chtějí pracovat se zlomky.
+porozumět tomu, jak používat knihovnu Fractions64, aby 
+k dosažení tohoto cíle.
+
+\section{Stažení}
+Tento projekt k dispozici ke stažení na adrese
+mého githubu\footnote{https://www.github.com/ondranedo/fractions}.
+Projekt můžete naklonovat přímo do svého vývojového prostředí IDE\footnote{Integrované vývojové prostředí}, nebo můžete
+naklonovat projekt pomocí příkazu git clone. Pokud však chcete jen
+použít knihovnu, můžete si složku se zdrojovými kódy stáhnout ručně, 
+jsou tam koneckonců jen dva zdrojové soubory.
+
+\begin{list}{}
+\item \small{\emph{fractions64.h}}
+\item \small{\emph{fractions64.c}}
+\end{list}
+\vspace{13pt}
+
+\section{Jak nastavit projekt}
+Pokud jste si zvolisi jinou variant sestavení, dovloste mi podotknou že
+že je třeba projekt sestavit jako .lib. Celé toto muže udělat nástroj CMake\footnote{https://cs.wikipedia.org/wiki/CMake}, který vytvoří .lib 
+soubor za vás, ale klidně použijte vlastní nástroje pro sestavení.
+
+Pro ty, kteří si zvolili sestavovací nástroj CMake, stačí přímo
+naklonovat tuto knihovnu do navržené složky pro externí nástroje.
+knihovny (něco jako \textit{/vendor}). A do své 
+root CMakeLists.txt přidejte tento příkaz: \textit{addSubdirectory([your\_specified\_path])}.
+Musíte také zahrnout přidruženou hlavičku, která se nachází ve složce
+\textit{/include}. A nakonec
+musíte do svého spustitelného souboru zahrnout soubor .lib. název souboru
+lib je \textit{frac}.
+
+Pro ty, kteří používají jiný způsob sestavování, mějte na paměti, že
+vaše verze překladače a OS\footnote{Operační systém} nemusí být podporovány, překladače 
+na kterých byl testován, jejich přidružená verze a operační systém jsou uvedeny v seznamu
+zde:
+\begin{itemize}
+\item \textbf{Windows}\\
+Nebylo testováno.
+
+\item \textbf{MacOS}\\
+Úspěšně otestováno a vyvinuto na Clangu\footnote{https://cs.wikipedia.org/wiki/Clang}
+verze \textit{Apple clang verze 14.0.0 (clang-1400.0.29.202)}
+pro taget \textit{arm64-apple-darwin22.2.0} pomocí verze CMake:
+\textit{3.25.1}: \textit{3.25.1}.
+
+\item \textbf{Linux} \\
+Nebylo testováno.
+
+\end{itemize}
+
+Existuje však alternativa pro ty, kteří se nesnaží
+knihovnu vyvíjet. Pro tyti lidi je zde již předvytvořen
+projekt pro různá IDE. Tyto projekty můžele nalézt ve 
+složce \textit{/build}
+
+\begin{enumerate}
+    \item{\textbf{RedPanda}}
+    \item{\textbf{Visual Studio 2023}}
+\end{enumerate}
+
+V těchto projektech najdete i předvytvořené demo soubory,
+pro ujasnění funkcí knihovny. Tyto spustitelné soubory je
+třeba ale předem zkompilovat.
+
+\section{API}
+API této knihovny je dodržováno striktním dodržováním
+pojmenovávací konvencí. Ta je následující:
+\begin{enumerate}
+    \item Všechna funkce a datové typy začínají jménem
+    \textbf{fracXxx}.
+    \item Vrací li funkce pamět vytvořenou na haldě\footnote{https://cs.wikipedia.org/wiki/Halda}
+    má ve svém názvu nakonci \textbf{H}. Př: \textit{fracAddFraction64H}
+    \item Za název \textbf{frac} je vždy operace kterou chceme vykovávat.
+\end{enumerate}
+
+\subsection{Vytváření zlomku}
+Zlomky je možno vytvořit dvěma způsoby, a to:
+\begin{enumerate}
+    \item Skrze funkce \textbf{Create}
+    \item Skrze funkce \textbf{GetCpy}
+\end{enumerate}
+Metoda \textbf{Create} se dá rozdělit na dvě varianty,
+a to na vytváření pomocí jmenovatele s čitatele, a nebo
+pomocí desetinného čísla pomocí funkce \textbf{CreateFloat}.
+
+Jak metoda \textbf{GetCpy} tak metoda \textbf{Create} podporují \textbf{H} variantu, která vrátí adresu 
+zlomku, který byl vytvořen na haldě
+
+\subsection{Ničení zlomku}
+Pokud zlomek již nebude potřebován je jej třeba zničit 
+skrye funkce \textbf{Destroy}. A jeli zlomek uchováván jako adresa na haldu,
+je třeba zavolat funcki \textbf{Destroy} s \textbf{H} variantou.
+
+\subsection{Getters a Setters}
+Nastavují hodnotu zlomku, či získají hodnotu ze zlomku.
+
+\begin{itemize}
+    \item \textbf{fracGetA} vrací čitatel zlomku.
+    \item \textbf{fracGetB} vrací jmenovatel zlomku.
+    \item \textbf{fracSet} nastavi jmenovatel a čitatel zlomku.
+    \item \textbf{fracSetA} nataví čitatel zlomku.
+    \item \textbf{fracSetB} nataví jmenovatel zlomku.
+\end{itemize}
+
+\subsection{Matematické operace}
+
+Každá funkce má \textbf{H} variantu, která vrátí adresu 
+zlomku, který byl vytvořen na haldě, a variantu \textbf{Overwrite},
+jež přepíše první zlomek, který byl dán jako parametr pro volání 
+funkce s novými hodnotami.
+\begin{itemize}
+    \item \textbf{fracAdd} sečte zlomky.
+    \item \textbf{fracSub} odečte zlomky.
+    \item \textbf{fracMul} vynásobí zlomky.
+    \item \textbf{fracDiv} vydělí zlomky.
+    \item \textbf{fracPow} dá zlomek na mocninu jiného zlomku.
+\end{itemize}
+\subsection{Záměna jmenovatele a čitatele}
+Chceme li zamenit jmenovatele a čitatele zlomku, udělat takzvanou obrácenou hodnotu
+voláme funkci \textbf{fracSwitchAB}, chceme li zaměnit čitatele či jmenovatele u dvou zlomků, voláme 
+funkce \textbf{fracSwitchA} pro čitatele a \textbf{fracSwitchB} pro jmenovatele.
+
+\subsection{Výpis zlomku do souboru}
+Chceme li vypsat zlomek do souboru konzole či do námi otevřeného souboru,
+můžeme využít funkce \textbf{Dump} jejiž první parametr je onen soubor.
+Druhý parametr je adresa zlomku, a třetím parametrem je formát. Je-li formát nastaven na hodnotu \textbf{NULL} je využit defaultni formát: $a/b$.
+Chceme li nastavit náš vlastní formát použijeme pro čitatele \texttt{\textbf{\%a}} a jmenovatele \texttt{\textbf{\%b}} př.:
+
+$$\frac{5}{12} \xrightarrow{\texttt{"[\%a, \%b] \%b ano"}} \texttt{[5, 12] 12 ano}$$
+
+\subsection{Další funkce}
+\begin{itemize}
+    \item \textbf{fracCom} porovná dva zlomky. Vrací $0$ jsou li stejné, $1$ je-li první zlomek větší, a $-1$ je-li druhý zlomek větší.
+    \item \textbf{Simplify} převede zlomek na jeho zjednoduší variantu.
+    \item \textbf{Float} vráti zlomek v desetinném čísle.
+    \item \textbf{LCD} vrátí nejmenší společný jmenovatel pro dva zlomky.
+    \item \textbf{SetLogLvl} nastaví úroveň výpisu.
+    Defaultní úroveň je nastavena na \textbf{FRAC\_ERROR}.
+    \begin{enumerate} 
+        \item \textbf{FRAC\_ALL} vypíše všechny zprávy.
+        \item \textbf{FRAC\_WARNING} vypíše všechny varování a chybové stavy.
+        \item \textbf{FRAC\_ERROR} vypíše pouze chybové stavy.
+        \item \textbf{FRAC\_NONE} nevypíše nic.
+    \end{enumerate}
+    \item \textbf{SetDefaultSimplification} defaultní stav automatického zjednodušováni zlomků je \textbf{FRAC\_TRUE}, možno vypnout defaultní zjednodušováni zlomků posláním parametru \textbf{FRAC\_FALSE}.
+    \item \textbf{PowDouble} vypočte desetinnou hodnotu na mocninu zlomku.
+
+\end{itemize}
+
+\end{document}
